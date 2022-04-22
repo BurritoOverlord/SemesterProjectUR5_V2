@@ -26,9 +26,11 @@ def pts2Vect(ptA, ptB):
     return np.array(ptB) - np.array(ptA)
 
 def segmentExtension(ptA, ptB, dist):
+
     vAB = pts2Vect(ptA, ptB)
     vAC = dist * vAB / np.linalg.norm(vAB)
     ptC = np.array(ptA) + vAC
+
     return ptC
 
 
@@ -80,3 +82,9 @@ def angle(ptA, ptB):
     alpha = np.arccos(dot_product)
 
     return alpha
+
+def calculate_distance(centerA, centerB):
+
+    dist = math.sqrt((centerB[0] - centerA[0]) ** 2 + (centerA[1] - centerB[2]) ** 2)
+
+    return dist

@@ -1,5 +1,8 @@
+import copy
+
 import rtde_control, rtde_receive
 import numpy as np
+import math
 
 # Setup robot with robot IP address
 rtde_c = rtde_control.RTDEControlInterface("192.168.1.20")
@@ -22,14 +25,20 @@ acc_L_fast = 1
 # Move robot between positions in Joint space
 
 # You can define position, speed and acceleration
+print("1")
 rtde_c.moveJ(np.deg2rad(home_J), speed_J_fast, acc_J_fast)
 # You can define only position, default speed and acceleration will be applied
+print("2")
 rtde_c.moveJ(np.deg2rad(position1_J))
 # You can define position and speed, default acceleration will be applied
+print("3")
 rtde_c.moveJ(np.deg2rad(position2_J), speed_J_fast)
 # You can define whether movement will be blocking or non-blocking
 # Default is False - blocking movement, True is non-blocking movement
-rtde_c.moveJ(np.deg2rad(position1_J), speed_J_fast, acc_J_fast, True)
+print("2")
+rtde_c.moveJ(np.deg2rad(position1_J), speed_J_fast, acc_J_fast, False)
+
+"""
 
 # Get current position in Cartesian space
 temp_L = rtde_r.getActualTCPPose()
@@ -41,6 +50,19 @@ rtde_c.moveL(temp_L, speed_J_fast, acc_L_fast)
 # Default is False - blocking movement, True is non-blocking movement
 temp_L [2] += 0.05
 rtde_c.moveL(temp_L, speed_J_fast, acc_L_fast, True)
+"""
+
+Joint_positions = rtde_r.getActualQ()
+print('Joint positions are: ', Joint_positions, end = '\n')
+displacement = copy.copy(Joint_positions)
+
+displacement[5] -= math.pi/2
+print(Joint_positions)
+
+rtde_c.moveJ(displacement)
+
+
+
 
 # Stop the RTDE control script
 rtde_c.stopScript()
