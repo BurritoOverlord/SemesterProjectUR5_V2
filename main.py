@@ -11,9 +11,6 @@ import PathPlanning.simplePouring as sp
 
 "SETTINGS AND VARIABLES ________________________________________________________________"
 
-# Total number of Cups to be detected ( The marker ID's have to start at 4 and go incrementally
-nb_Cups = 4
-
 # Setup robot with robot IP address
 rtde_c = rtde_control.RTDEControlInterface("192.168.1.20")
 rtde_r = rtde_receive.RTDEReceiveInterface("192.168.1.20")

@@ -52,11 +52,11 @@ def move_to_markers(detected_markers):
             listCups_edge.append([eX, eY])
 
 
-    obstacle_analysis(listCups_center, listCups_edge, listMarker_center, listMarker_edge)
+    cup_layout(listCups_center, listCups_edge, listMarker_center, listMarker_edge)
 
     return
 
-def obstacle_analysis(cupCList, cupEList, markerCList, markerEList):
+def cup_layout(cupCList, cupEList, markerCList, markerEList):
 
     figure, ax = plt.subplots()
 
