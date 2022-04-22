@@ -76,13 +76,17 @@ try:
     pouring_algorithm(listCups_data)
 
     print("exiting loop")
+    time.sleep(10)
+    move_robot.stop_script()
 
 except KeyboardInterrupt:
     print("closing robot connection")
     vs.stream.release()
     cv2.destroyAllWindows()
+    move_robot.stop_script()
 except:
     print("closing robot connection")
     print("Check Camera Connection")
     vs.stream.release()
     cv2.destroyAllWindows()
+    move_robot.stop_script()

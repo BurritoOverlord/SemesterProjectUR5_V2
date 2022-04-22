@@ -19,13 +19,13 @@ calibrationMatrix = np.load('Cam_Calibration/calibration_matrix.npy')
 distortionCoefficient = np.load('Cam_Calibration/distortion_coefficients.npy')
 
 # ArUco marker ref origin in the coordinates of the UR5 base ref frame
-origin_L = [0.305, 0.491, 0.31504431455331383, -3.13713023885791, 0.08284771453405795,
+origin_L = [0.305, 0.506, 0.31504431455331383, -3.13713023885791, 0.08284771453405795,
             -0.009878696005977336]
 
 # misc. hyperparameters
 rCups = 0.055  # Cup radius in cm
 rMax = 0.12
-dMtCe = 0.02  # distance from marker center to cup edge in cm
+dMtCe = 0.025  # distance from marker center to cup edge in cm
 
 # misc. Terrain Field to be defined at the beginning
 xMax = 0.5

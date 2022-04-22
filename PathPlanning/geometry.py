@@ -71,11 +71,10 @@ def orthoProj(ptA, ptB, querryPt):
 
 
 """Angle between vector and Y axis"""
-def angle(ptA, ptB):
+def get_angle(ptA, ptB):
 
     vAB = pts2Vect(ptA, ptB)
-    vOY = np.array((0,0),(0,1))
-
+    vOY = pts2Vect((0,0), (0,1))
     unit_vAB = vAB / np.linalg.norm(vAB)
     unit_vOY = vOY / np.linalg.norm(vOY)
     dot_product = np.dot(unit_vAB, unit_vOY)
@@ -88,3 +87,14 @@ def calculate_distance(centerA, centerB):
     dist = math.sqrt((centerB[0] - centerA[0]) ** 2 + (centerA[1] - centerB[2]) ** 2)
 
     return dist
+
+def rotate(cX, cY, pX, pY, angle):
+    """
+    Rotate a point counterclockwise by a given angle around a given origin.
+
+    The angle should be given in radians.
+    """
+
+    qX = cX + math.cos(angle) * (pX - cX) - math.sin(angle) * (pY - cY)
+    qY = cY + math.sin(angle) * (pX - cX) + math.cos(angle) * (pY - cY)
+    return qX, qY

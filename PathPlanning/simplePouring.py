@@ -1,5 +1,6 @@
 import move_robot
 import PathPlanning.geometry as geometry
+import math
 
 # misc. hyperparameters
 rMax = 0.12 # maximum radius to check if cups obstruct the gripper (usually go for 1.2 times the gripper dy
@@ -21,7 +22,7 @@ def simple_pouring(listCups):
         listCups_center.append(obj["center"])
         listCups_edge.append(obj["edge"])
         listCups_moved.append(False)
-        listCups_endlocations.append([xLoc, yLoc+i*dCups])
+        listCups_endlocations.append([xLoc, yLoc+(i+1)*dCups])
 
     # cycle through all cups and check if they can and should be moved
 
@@ -33,13 +34,15 @@ def simple_pouring(listCups):
         # Case 1: No Obstruction
         if nb_obst == 0:
             # Grab cup with fixed angle
-            move_robot.grab_cup(listCups_center[i][0], listCups_center[i][1])
-
-            print(listCups_endlocations)
+            angle = 0
+            move_robot.grab_cup(listCups_center[i][0], listCups_center[i][1], angle)
 
             # Place cup on the designated areas with good orientations
             move_robot.place_cup(listCups_endlocations[i][0],listCups_endlocations[i][1])
             #change the center position in the list
+
+        #if nb_obst == 2:
+            ##calculate the angle for which the gripper needs to grab the cup properly
 
     return
 
