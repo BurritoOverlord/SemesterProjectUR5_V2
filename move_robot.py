@@ -33,6 +33,21 @@ origin_L = [0.305, 0.506, 0.31504431455331383+2*grab_height_offset, -3.137130238
             -0.009878696005977336]
 
 
+pouring_1_J = [-15.0, -14.38000000000001, 32.89, -29.959999999999994, 45.519999999999996, -14.489999999999995]
+"""
+test-1
+[-15.0, -14.38000000000001, 32.89, -29.959999999999994, 45.519999999999996, -14.489999999999995]
+test-2
+[-17.25, -0.5999999999999943, 16.97, -10.810000000000002, 44.519999999999996, 0.010000000000005116]
+test-3
+[-6.060000000000002, 6.510000000000005, 12.36, -15.099999999999994, 31.15, -7.560000000000002]
+test-4
+[-0.410000000000025, 3.0, 2.5500000000000114, -4.710000000000001, 14.120000000000001, -0.5100000000000051]
+
+cup_mix_pos_J = [-291.43, -85.40, -124.83, -59.52, 90.05, -18.35]
+"""
+
+
 def initialize_robot():
     # initialise robot with URBasic
     home_J = [-298.22, -66.90, -113.00, -89.74, 90.11, -24.63]
@@ -56,17 +71,13 @@ def grab_cup(cX, cY, angle):
 
     #####################################################################
     # Go to Desired Position
-    print("Go to desired position")
+    #print("Go to desired position")
 
     pX = copy.copy(cX)
     pY = copy.copy(cY) - grip_dy
 
-    print(pY)
-
     pX, pY = geometry.rotate(cX, cY, pX, pY, angle)
 
-    print(cY)
-    print(pY)
 
     temp_L[0] = pX
     temp_L[1] = pY
@@ -84,12 +95,10 @@ def grab_cup(cX, cY, angle):
     print(rot)
 
     print(center_J[5])
-    print("rotation")
 
     center_J[5] -= rot
     rtde_c.moveJ(center_J)
 
-    print("go down")
     Cartesian_positions = rtde_r.getActualTCPPose()
     temp_L = copy.copy(Cartesian_positions)
     # go down and grab and go back up
@@ -98,7 +107,6 @@ def grab_cup(cX, cY, angle):
     arduino.send_message("grab")
     time.sleep(7)
 
-    print("go up")
     # go down and grab and go back up
     temp_L[2] = origin_L[2]
     rtde_c.moveL(temp_L, VELOCITY, ACCELERATION)
@@ -108,7 +116,7 @@ def grab_cup(cX, cY, angle):
 def place_cup(cX, cY):
     temp_L = copy.copy(origin_L)
 
-    print("place Cup")
+    #print("place Cup")
     temp_L[0] = cX + grip_dy
     temp_L[1] = cY
 
@@ -125,7 +133,6 @@ def place_cup(cX, cY):
 
     rtde_c.moveJ(center_J)
 
-    print("go down")
     # go down and grab and go back up
     temp_L = rtde_r.getActualTCPPose()
     temp_L[2] = origin_L[2] - 3 * grab_height_offset
@@ -133,7 +140,6 @@ def place_cup(cX, cY):
     arduino.send_message("release")
     time.sleep(7)
 
-    print("go up")
     # go down and grab and go back up
     temp_L[2] = origin_L[2]
     rtde_c.moveL(temp_L, VELOCITY, ACCELERATION)
@@ -141,30 +147,88 @@ def place_cup(cX, cY):
     return
 
 
-def place_cup2(cX, cY, alpha):
+def place_cupP(cX, cY):
     temp_L = copy.copy(origin_L)
 
-    print("place Cup")
+    #print("place Cup")
+    temp_L[0] = cX
+    temp_L[1] = cY - grip_dy
+
+    rtde_c.moveL(temp_L, VELOCITY, ACCELERATION)
+
+    # go down and grab and go back up
+    temp_L = rtde_r.getActualTCPPose()
+    temp_L[2] = origin_L[2] - 3 * grab_height_offset
+    rtde_c.moveL(temp_L, VELOCITY, ACCELERATION)
+    arduino.send_message("release")
+    time.sleep(7)
+
+    # go down and grab and go back up
+    temp_L[2] = origin_L[2]
+    rtde_c.moveL(temp_L, VELOCITY, ACCELERATION)
+
+    return
+
+
+def grab_cupP(cX, cY, angle):
+
+    temp_L = copy.copy(origin_L)
+
+    #####################################################################
+    # Go to Desired Position
+    #print("Go to desired position")
+
+    pX = copy.copy(cX)
+    pY = copy.copy(cY) - grip_dy
+
+    pX, pY = geometry.rotate(cX, cY, pX, pY, angle)
+
+
+    temp_L[0] = pX
+    temp_L[1] = pY
+
+    rtde_c.moveL(temp_L, VELOCITY, ACCELERATION)
+
+    #####################################################################
+    # Rotate Wrist Correspondingly
+    # Get current Joint position in Joint space
+    center_J = rtde_r.getActualQ()
+    #Get desired angle
+    rot = angle
+    print(rot)
+
+    print(center_J[5])
+
+    center_J[5] -= rot
+    rtde_c.moveJ(center_J)
+
+    Cartesian_positions = rtde_r.getActualTCPPose()
+    temp_L = copy.copy(Cartesian_positions)
+    # go down and grab and go back up
+    temp_L[2] = origin_L[2] - 3 * grab_height_offset #was calculated by hand
+    rtde_c.moveL(temp_L, VELOCITY, ACCELERATION)
+    arduino.send_message("grab")
+    time.sleep(7)
+
+    # go down and grab and go back up
+    temp_L[2] = origin_L[2]
+    rtde_c.moveL(temp_L, VELOCITY, ACCELERATION)
+
+    return
+
+def pouring(cX, cY):
+    temp_L = copy.copy(origin_L)
+
     temp_L[0] = cX + grip_dy
     temp_L[1] = cY
 
     rtde_c.moveL(temp_L, VELOCITY, ACCELERATION)
+    Joint_positions = rtde_r.getActualQ()
+    temp_L = copy.copy(Joint_positions)
 
-    #Orientate the cup into its proper orientation
-    # Get current Joint position in Joint space
-    center_J = rtde_r.getActualQ()
-    angle_J = copy.copy(center_J[5])
-
-    rot = geometry.get_angleDiff(alpha, angle_J)
-
-    center_J[5] = rot
-
-    rtde_c.moveJ(center_J)
-
-
-
-
-
+    for i in range(len(temp_L)):
+        temp_L[i] += pouring_1_J
+    rtde_c.moveJ(np.deg2rad(pouring_1_J))
     return
 
 def stop_script():
