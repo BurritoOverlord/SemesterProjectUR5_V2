@@ -29,7 +29,7 @@ grip_dy = 0.12  # meters
 grab_height_offset = 0.075 #grab height offset to cup from origin_L
 
 # best if I get it from Joint Position
-origin_L = [0.305, 0.506, 0.31504431455331383, -3.13713023885791, 0.08284771453405795,
+origin_L = [0.305, 0.506, 0.31504431455331383+2*grab_height_offset, -3.13713023885791, 0.08284771453405795,
             -0.009878696005977336]
 
 
@@ -93,17 +93,15 @@ def grab_cup(cX, cY, angle):
     Cartesian_positions = rtde_r.getActualTCPPose()
     temp_L = copy.copy(Cartesian_positions)
     # go down and grab and go back up
-    temp_L[2] = origin_L[2] - grab_height_offset
+    temp_L[2] = origin_L[2] - 3 * grab_height_offset #was calculated by hand
     rtde_c.moveL(temp_L, VELOCITY, ACCELERATION)
     arduino.send_message("grab")
     time.sleep(7)
 
     print("go up")
     # go down and grab and go back up
-    temp_L[2] = origin_L[2] + 2*grab_height_offset
+    temp_L[2] = origin_L[2]
     rtde_c.moveL(temp_L, VELOCITY, ACCELERATION)
-
-
 
     return
 
@@ -127,11 +125,10 @@ def place_cup(cX, cY):
 
     rtde_c.moveJ(center_J)
 
-
     print("go down")
     # go down and grab and go back up
     temp_L = rtde_r.getActualTCPPose()
-    temp_L[2] = origin_L[2] - grab_height_offset
+    temp_L[2] = origin_L[2] - 3 * grab_height_offset
     rtde_c.moveL(temp_L, VELOCITY, ACCELERATION)
     arduino.send_message("release")
     time.sleep(7)
@@ -140,6 +137,32 @@ def place_cup(cX, cY):
     # go down and grab and go back up
     temp_L[2] = origin_L[2]
     rtde_c.moveL(temp_L, VELOCITY, ACCELERATION)
+
+    return
+
+
+def place_cup2(cX, cY, alpha):
+    temp_L = copy.copy(origin_L)
+
+    print("place Cup")
+    temp_L[0] = cX + grip_dy
+    temp_L[1] = cY
+
+    rtde_c.moveL(temp_L, VELOCITY, ACCELERATION)
+
+    #Orientate the cup into its proper orientation
+    # Get current Joint position in Joint space
+    center_J = rtde_r.getActualQ()
+    angle_J = copy.copy(center_J[5])
+
+    rot = geometry.get_angleDiff(alpha, angle_J)
+
+    center_J[5] = rot
+
+    rtde_c.moveJ(center_J)
+
+
+
 
 
     return

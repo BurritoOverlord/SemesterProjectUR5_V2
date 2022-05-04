@@ -84,9 +84,15 @@ def get_angle(ptA, ptB):
 
 def calculate_distance(centerA, centerB):
 
-    dist = math.sqrt((centerB[0] - centerA[0]) ** 2 + (centerA[1] - centerB[2]) ** 2)
+    print(centerA)
+    distance = math.sqrt(((centerA[0]-centerB[0])**2)+((centerA[1]-centerB[1])**2))
+    print(distance)
 
-    return dist
+    return distance
+
+def calculate_midpoint(ptA, ptB):
+    ptC = ((ptA[0] + ptB[0]) / 2, (ptA[1] + ptB[1]) / 2)
+    return ptC
 
 def rotate(cX, cY, pX, pY, angle):
     """
@@ -98,3 +104,7 @@ def rotate(cX, cY, pX, pY, angle):
     qX = cX + math.cos(angle) * (pX - cX) - math.sin(angle) * (pY - cY)
     qY = cY + math.sin(angle) * (pX - cX) + math.cos(angle) * (pY - cY)
     return qX, qY
+
+def get_angleDiff(angleC, angleR):
+    dif = angleR - angleC
+    return dif

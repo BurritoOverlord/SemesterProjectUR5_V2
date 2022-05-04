@@ -168,13 +168,13 @@ def getCupCoordinates(detected_markers):
 
 
 def cup_layout(listCups):
+
+    figure, ax = plt.subplots()
+    # change default range so that new circles will work
+    ax.set_xlim((xMin, xMax))
+    ax.set_ylim((0, yMax))
+
     for i, obj in enumerate(listCups, 0):
-        figure, ax = plt.subplots()
-
-        # change default range so that new circles will work
-        ax.set_xlim((xMin, xMax))
-        ax.set_ylim((0, yMax))
-
         # plot circles
         circle = plt.Circle(obj["center"], rCups, color='red', ec='black')
         plt.gcf().gca().add_patch(circle)

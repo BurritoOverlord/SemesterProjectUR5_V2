@@ -34,6 +34,7 @@ def pouring_algorithm(listCups_data):
 
     #Plot the Initial Cup Layout
     marker_cup_detection.cup_layout(listCups_data)
+    print("Establishing initial cup layout")
 
     # TO-DO Make simple algorithm more robust, but I need more time, and it is not the focus of the project
     #Plan the simple algorithm
