@@ -26,6 +26,8 @@ VELOCITY = 0.8  # Robot speed value
 grip_dz = 168.4405 / 1000  # meters
 grip_dy = 0.12  # meters
 
+pouring_dx = 0.08
+
 grab_height_offset = 0.075 #grab height offset to cup from origin_L
 
 # best if I get it from Joint Position
@@ -33,18 +35,23 @@ origin_L = [0.305, 0.506, 0.31504431455331383+2*grab_height_offset, -3.137130238
             -0.009878696005977336]
 
 
-pouring_1_J = [-15.0, -14.38000000000001, 32.89, -29.959999999999994, 45.519999999999996, -14.489999999999995]
-"""
-test-1
-[-15.0, -14.38000000000001, 32.89, -29.959999999999994, 45.519999999999996, -14.489999999999995]
-test-2
-[-17.25, -0.5999999999999943, 16.97, -10.810000000000002, 44.519999999999996, 0.010000000000005116]
-test-3
-[-6.060000000000002, 6.510000000000005, 12.36, -15.099999999999994, 31.15, -7.560000000000002]
-test-4
-[-0.410000000000025, 3.0, 2.5500000000000114, -4.710000000000001, 14.120000000000001, -0.5100000000000051]
+pouring_1_L = [0.1329460444039362, 0.001992027271668584, 0.028232181258689593, 0.4172834491949249, 0.5468231534718957, -0.7511273037641358]
+pouring_2_L = [-0.1646497520298684, 0.017626478234580634, -0.056484304018509124, -0.7349117459413628, -0.3580076965193224, 0.4108333718214877]
+pouring_3_L = [-0.07186949898256362, -0.023014226767514745, -0.08788628407032015, -0.352989202528292, -0.4261227544800278, 0.33786829085844206]
+pouring_4_L = [-0.014978186806280838, -0.010535790024139513, -0.02171575440950893, -0.17231163199225163, -0.20942507249648468, 0.07274833908588763]
 
-cup_mix_pos_J = [-291.43, -85.40, -124.83, -59.52, 90.05, -18.35]
+
+"""
+test-0
+[-3.7720707644628426e-06, -4.971880862347788e-06, 2.472595297670077e-05, 4.4505749226431135e-05, -8.457623627222688e-06, 6.690946141478353e-05]
+test-1
+[0.1329460444039362, 0.001992027271668584, 0.028232181258689593, 0.4172834491949249, 0.5468231534718957, -0.7511273037641358]
+test-2
+[-0.1646497520298684, 0.017626478234580634, -0.056484304018509124, -0.7349117459413628, -0.3580076965193224, 0.4108333718214877]
+test-3
+[-0.07186949898256362, -0.023014226767514745, -0.08788628407032015, -0.352989202528292, -0.4261227544800278, 0.33786829085844206]
+test-4
+[-0.014978186806280838, -0.010535790024139513, -0.02171575440950893, -0.17231163199225163, -0.20942507249648468, 0.07274833908588763]
 """
 
 
@@ -219,16 +226,48 @@ def grab_cupP(cX, cY, angle):
 def pouring(cX, cY):
     temp_L = copy.copy(origin_L)
 
-    temp_L[0] = cX + grip_dy
+    # print("place Cup")
+    temp_L[0] = cX + grip_dy + pouring_dx
     temp_L[1] = cY
 
     rtde_c.moveL(temp_L, VELOCITY, ACCELERATION)
-    Joint_positions = rtde_r.getActualQ()
-    temp_L = copy.copy(Joint_positions)
 
+    # Get current Joint position in Joint space
+    center_J = rtde_r.getActualQ()
+    # have a 90 degree rotation
+    if center_J[5] > 0:
+        center_J[5] -= math.pi / 2
+    else:
+        center_J[5] += 3 * math.pi / 2
+
+    rtde_c.moveJ(center_J)
+
+    Cartesian_positions = rtde_r.getActualTCPPose()
+    temp_L = copy.copy(Cartesian_positions)
+
+    #Move to Pouring Position 1
     for i in range(len(temp_L)):
-        temp_L[i] += pouring_1_J
-    rtde_c.moveJ(np.deg2rad(pouring_1_J))
+        temp_L[i] -= pouring_1_L[i]
+    print(temp_L)
+    rtde_c.moveL(temp_L)
+
+    #Move to Pouring Position 2
+    for i in range(len(temp_L)):
+        temp_L[i] += pouring_2_L[i]
+    print(temp_L)
+    rtde_c.moveL(temp_L)
+
+    #Move to Pouring Position 3
+    for i in range(len(temp_L)):
+        temp_L[i] += pouring_3_L[i]
+    print(temp_L)
+    rtde_c.moveL(temp_L)
+
+    #Move to Pouring Position 4
+    for i in range(len(temp_L)):
+        temp_L[i] += pouring_4_L[i]
+    print(temp_L)
+    rtde_c.moveL(temp_L)
     return
 
 def stop_script():
