@@ -80,6 +80,10 @@ def get_angle(ptA, ptB):
     dot_product = np.dot(unit_vAB, unit_vOY)
     alpha = np.arccos(dot_product)
 
+    c = np.cross(ptB,ptA)
+    if c > 0:
+        alpha += math.pi
+
     return alpha
 
 def calculate_distance(centerA, centerB):
